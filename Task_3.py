@@ -28,6 +28,7 @@ users = [login(), password()]
 for i in users:
     try:
         cursor.execute("INSERT INTO reg VALUES(?, ?, ?)", (None, users[0], users[1]))
+        break
     except sqlite3.IntegrityError:
         print("Такой аккаунт уже существует!") 
         break
