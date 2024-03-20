@@ -2,8 +2,8 @@ import sqlite3
 
 
 def login():
-    log = input("Введите логин: ")
-    return log
+    return input("Введите логин: ")
+    
 
 
 def password():
