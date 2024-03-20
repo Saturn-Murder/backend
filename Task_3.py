@@ -29,7 +29,8 @@ for i in users:
     try:
         cursor.execute("INSERT INTO reg VALUES(?, ?, ?)", (None, users[0], users[1]))
     except sqlite3.IntegrityError:
-        print("Такой аккаунт уже существует!")
+        print("Такой аккаунт уже существует!") 
+        break
 
 con.commit()
 
