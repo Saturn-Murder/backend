@@ -35,4 +35,3 @@ for i in users:
 
 con.commit()
 
-
