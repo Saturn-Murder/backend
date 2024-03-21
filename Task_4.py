@@ -1,6 +1,13 @@
-def password():
+import sqlite3
+
+
+def login():
+    return input("Введите логин: ")
+
+
+def reg():
     while True:
-        favor = input("Password: ")
+        favor = input("Придумайте пароль: ")
         cap = 0
         low = 0
         dig = 0
@@ -24,4 +31,16 @@ def password():
     return print("Ваш пароль сохранён")
 
 
-password()
+def entrance():
+    return print("Введите пароль: ")
+
+
+con = sqlite3.connect("localhost.db")
+cursor = con.cursor()
+cursor.execute("""CREATE TABLE IF NOT EXISTS accounts
+                (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                login TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL)
+            """)
+
+
