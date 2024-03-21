@@ -51,6 +51,7 @@ if first.lower() == "войти":
     for i in acc:
         try:
             cursor.execute("INSERT INTO accounts VALUES(?, ?, ?)", (None, acc[0], acc[1]))
+            print("Аккаунт не найден")
             break
         except sqlite3.IntegrityError:
             print("Добро пожаловать!")
@@ -66,6 +67,7 @@ elif first.lower() == "зарегистрироваться":
             print("Вы успешно зарегистрировались!")
             cursor.execute("SELECT * FROM accounts")
             print(cursor.fetchall())
+            con.commit()
             break
         except sqlite3.IntegrityError:
             print("Такой аккаунт уже существует! Вам нужно войти в аккаунт!")
