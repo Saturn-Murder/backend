@@ -5,7 +5,6 @@ def login():
     return input("Введите логин: ")
     
 
-
 def password():
     while True:
         favor = input("Введите пароль: ")

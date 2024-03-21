@@ -1,0 +1,21 @@
+Index: Task_3.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import sqlite3\r\n\r\n\r\ndef login():\r\n    log = input(\"Введите логин: \")\r\n    return log\r\n\r\n\r\ndef password():\r\n    while True:\r\n        favor = input(\"Введите пароль: \")\r\n        if len(favor) < 6:\r\n            print(\"Пароль слишком маленький, хотя бы 6 символов\")\r\n        else:\r\n            break\r\n    return favor\r\n\r\n\r\ncon = sqlite3.connect(\"localhost.db\")\r\ncursor = con.cursor()\r\ncursor.execute(\"\"\"CREATE TABLE IF NOT EXISTS reg\r\n                (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,\r\n                login TEXT NOT NULL UNIQUE,\r\n                password TEXT NOT NULL)\r\n            \"\"\")\r\n\r\nusers = [login(), password()]\r\nfor i in users:\r\n    try:\r\n        cursor.execute(\"INSERT INTO reg VALUES(?, ?, ?)\", (None, users[0], users[1]))\r\n    except sqlite3.IntegrityError:\r\n        print(\"Такой аккаунт уже существует!\")\r\n\r\ncon.commit()\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Task_3.py b/Task_3.py
+--- a/Task_3.py	
++++ b/Task_3.py	
+@@ -28,8 +28,10 @@
+ for i in users:
+     try:
+         cursor.execute("INSERT INTO reg VALUES(?, ?, ?)", (None, users[0], users[1]))
++        break
+     except sqlite3.IntegrityError:
+         print("Такой аккаунт уже существует!")
++        break
+ 
+ con.commit()
+ 
