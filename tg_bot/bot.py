@@ -1,71 +1,46 @@
 import telebot
-from telebot import types
 import sqlite3
+from telebot import types
 
 
-bot = telebot.TeleBot('6417408484:AAENEqwykRLTar_lCauXZMuTOI5BkglQ6yk')
-name = None
+
+bot = telebot.TeleBot('7079792810:AAE7N2lW5wRPOhLOWPE40sK72pUO2Rz3-d8')
+con = sqlite3.connect('bot_database.db')
+cursor = con.cursor()
+
+
+cursor.execute("""CREATE TABLE IF NOT EXISTS users
+               (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+               user_id INTEGER UNIQUE,
+               name TEXT NOT NULL,
+               status varchar(50))
+            """)
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    con = sqlite3.connect("database.db")
+    markup = types.InlineKeyboardMarkup(row_width=3)
+    item1 = types.InlineKeyboardButton("0", callback_data="0")
+    item2 = types.InlineKeyboardButton("1", callback_data="1")
+    item3 = types.InlineKeyboardButton("2", callback_data="2")
+    item4 = types.InlineKeyboardButton("3", callback_data="3")
+    item5 = types.InlineKeyboardButton("4", callback_data="4")
+    item6 = types.InlineKeyboardButton("5", callback_data="5")
+    markup.add(item1, item2, item3, item4, item5, item6)
+    con = sqlite3.connect('bot_database.db')
     cursor = con.cursor()
-    cursor.execute("""CREATE TABLE IF NOT EXISTS users 
-                   (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-                   name varchar(50), 
-                   pass varchar(50), 
-                   coins INTEGER DEFAULT 0, 
-                   exp INTEGER DEFAULT 0, 
-                   level INTEGER DEFAULT 0)
-                """)
+    cursor.execute("INSERT INTO users (user_id, name, status) VALUES (?, ?, ?)", (message.from_user.id, message.from_user.username, 'user'))
+    con.commit()
+    cursor.execute("SELECT status FROM users WHERE user_id = (?)", (message.from_user.id,))
+    status = cursor.fetchone()
     con.commit()
     cursor.close()
     con.close()
-    bot.send_message(message.chat.id, "Здравствуйте! Для регистрации назовите своё имя:")
-    bot.register_next_step_handler(message, user_name)
-
-
-def user_name(message):
-    global name
-    name = message.text.strip()
-    bot.send_message(message.chat.id, "Введите пароль:")
-    bot.register_next_step_handler(message, user_pass)
-
-
-def user_pass(message):
-    password = message.text.strip()
-    con = sqlite3.connect("database.db")
-    cursor = con.cursor()
-    cursor.execute("INSERT INTO users (name, pass) VALUES ('%s', '%s')" % (name, password,))
-    con.commit()
-    cursor.close()
-    con.close()
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    main_item = types.KeyboardButton("Главное меню")
-    markup.add(main_item)
-    bot.send_message(message.chat.id, "Вы успешно зарегистрировались!", reply_markup=markup)
-
-
-@bot.message_handler(content_types=['text'])
-def text_reply(message):
-    con = sqlite3.connect('database.db')
-    cursor = con.cursor()
-    if message.text == "Главное меню":
-        markup2 = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        item1 = types.KeyboardButton('Создатели')
-        item2 = types.KeyboardButton('Поддержка')
-        item3 = types.KeyboardButton('Профиль')
-        markup2.add(item1, item2, item3)
-        bot.send_message(message.chat.id, "Создатели: ...\nПоддержка: ...\nПрофиль: ...", reply_markup=markup2)
-    if message.text == "Профиль":
-        cursor.execute("SELECT * FROM users WHERE name = (?)", (name,))
-        users = cursor.fetchall()
-        info = ''
-        for el in users:
-            info += f'Имя: {el[1]}\nПароль: {el[2]}\nМонеты: {el[3]}\nОпыт: {el[4]}\nУровень: {el[5]}'
-        bot.send_message(message.chat.id, info)
-
-
+    if status == "user":
+        bot.send_message(message.chat.id, f'Привет {message.from_user.username}. Пожалуйста, оцените качество обслуживания:', reply_markup=markup)
+    else:
+        return
+    
 
 bot.polling(none_stop=True)
+
