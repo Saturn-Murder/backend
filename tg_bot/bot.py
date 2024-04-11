@@ -26,11 +26,13 @@ con.close()
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    global tg_id, tg_name
+    global tg_id, tg_name, status
     tg_id = message.from_user.id
     tg_name = message.from_user.username
     if tg_name == 'Dovi_t':
         status = 'admin'
+    else:
+        status = 'user'
     bot.send_message(message.chat.id, "Hello")
     markup = types.InlineKeyboardMarkup(row_width=3)
     markup2 = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -47,45 +49,44 @@ def start(message):
         bot.send_message(message.chat.id, "Оцените качество обслуживания:", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, "Здравствуйте! Хотите посмотреть статистику?", reply_markup=markup2)
+        bot.register_next_step_handler(message, per)
 
 
-if status == "admin":
-    @bot.message_handler(content_types=['text'])
-    def per(message):
-        if message.text == "Ебашь!":
-            con = sqlite3.connect("bot_database.db")
-            cursor = con.cursor()
-            cursor.execute("SELECT (name, mark) FROM users")
-            name, total = cursor.fetchall()
-            bot.send_message(message.chat.id, f'{name}, {total}')
-            con.commit()
-            cursor.close()
-            con.close()
-
-
-if status == 'user':
-    @bot.callback_query_handler(func=lambda call: True)
-    def callback(call):
-        global value, tg_id, tg_name
-        if call.data == "0":
-            value = call.data
-        elif call.data == "1":
-            value = call.data
-        elif call.data == "2":
-            value = call.data
-        elif call.data == "3":
-            value = call.data
-        elif call.data == "4":
-            value = call.data
-        elif call.data == "5":
-            value = call.data
-        con = sqlite3.connect('bot_database.db')
+def per(message):
+    if message.text == "Ебашь!":
+        con = sqlite3.connect("bot_database.db")
         cursor = con.cursor()
-        cursor.execute("INSERT INTO users (user_id, name, mark) VALUES (?, ?, ?)", (tg_id, tg_name, value))
+        cursor.execute("SELECT (name, mark) FROM users")
+        name, total = cursor.fetchall()
+        bot.send_message(message.chat.id, f'{name}, {total}')
         con.commit()
         cursor.close()
         con.close()
-        bot.send_message(call.message.chat.id, "Ваша оценка сохранена!")
+
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback(call):
+    global value, tg_id, tg_name
+    if call.data == "0":
+        value = call.data
+    elif call.data == "1":
+        value = call.data
+    elif call.data == "2":
+        value = call.data
+    elif call.data == "3":
+        value = call.data
+    elif call.data == "4":
+        value = call.data
+    elif call.data == "5":
+        value = call.data
+    con = sqlite3.connect('bot_database.db')
+    cursor = con.cursor()
+    cursor.execute("INSERT INTO users (user_id, name, mark) VALUES (?, ?, ?)", (tg_id, tg_name, value))
+    con.commit()
+    cursor.close()
+    con.close()
+    bot.send_message(call.message.chat.id, "Ваша оценка сохранена!")
     
 
 
