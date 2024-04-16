@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "node-telegram-bot-api": "^0.65.1",
+    "punycode": "^2.3.1"
+  }
+}
