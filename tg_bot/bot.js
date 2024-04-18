@@ -15,10 +15,13 @@ bot.on('text', async (msg) =>{
             bot.banChatMember(msg.chat.id,msg.from.id)
             bot.deleteMessage(msg.chat.id,msg.message_id)
             await wait(10000)
-            bot.unbanChatMember(msg.chat.id,msg.from.id)
+            await bot.unbanChatMember(msg.chat.id,msg.from.id)
             console.log(msg.from.username,' unbaned')
         }
     })
+    if(msg.text == '/stop' && msg.from.username == 'Dovi_t'){
+        process.exit(0);
+    }
 })
  
 function wait(time) {
@@ -26,3 +29,4 @@ function wait(time) {
         setTimeout(resolve, time);
     });
 }
+
